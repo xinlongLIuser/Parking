@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qhit.parking.dao.ParkMapper">
+  <resultMap id="BaseResultMap" type="com.qhit.parking.entity.Park">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="price" javaType="java.lang.Double" jdbcType="DOUBLE" />
+      <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="parkaddr" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+  </resultMap>
+
+
+  <resultMap id="BaseResult" type="com.qhit.parking.entity.Park">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="price" javaType="java.lang.Double" jdbcType="DOUBLE" />
+      <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="parkaddr" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+    <association property="orders" javaType="com.qhit.parking.entity.Orders">
+      <constructor>
+        <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <arg column="code" javaType="java.lang.String" jdbcType="VARCHAR" />
+        <arg column="user_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <arg column="park_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <arg column="createDate" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+        <arg column="status" javaType="java.lang.Integer" jdbcType="INTEGER" />
+        <arg column="total" javaType="java.lang.Double" jdbcType="DOUBLE" />
+        <arg column="endDate" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+        <arg column="sumpark" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      </constructor>
+    </association>
+  </resultMap>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from park
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.qhit.parking.entity.Park">
+    insert into park (id, name, price, 
+      status, parkaddr)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{price,jdbcType=DOUBLE}, 
+      #{status,jdbcType=INTEGER}, #{parkaddr,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.qhit.parking.entity.Park">
+    update park
+    set name = #{name,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DOUBLE},
+      status = #{status,jdbcType=INTEGER},
+      parkaddr = #{parkaddr,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, name, price, status, parkaddr
+    from park
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, name, price, status, parkaddr
+    from park
+  </select>
+  <select id="getName" resultMap="BaseResultMap">
+  select id, name, price, status, parkaddr
+    from park
+    where name like concat('%',#{name},'%')
+  </select>
+
+  <insert id="batchInsert" parameterType="com.qhit.parking.entity.Park">
+    insert into park ( name, price,
+    status, parkaddr)
+    values
+    <foreach collection="list" item="list" separator=",">
+      (#{list.name,jdbcType=VARCHAR}, #{list.price,jdbcType=DOUBLE},
+      #{list.status,jdbcType=INTEGER}, #{list.parkaddr,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+
+  <select id="selectRf" resultMap="BaseResult">
+    SELECT p.id,p.name,o.park_id,p.status,p.parkaddr,
+    sum(o.total) total, sum(o.sumpark) sumpark,sum(p.price) price,
+    o.id,o.code,o.user_id,o.createDate, o.status,o.endDate
+    from orders o,park p
+    WHERE o.park_id=p.id
+    GROUP BY p.name,p.id
+  </select>
+
+</mapper>

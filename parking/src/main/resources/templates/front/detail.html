@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/moban/css/index.css}"/>
+    <link rel="stylesheet" th:href="@{/moban/css/table.css}"/>
+    <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.5/src/SearchInfoWindow_min.css"/>
+    <script th:src="@{/moban/js/jquery-1.7.2.min.js}"></script>
+    <script th:src="@{/moban/js/main.js}"></script>
+    <script type="text/javascript" th:src="@{/lib/My97DatePicker/4.8/WdatePicker.js}"></script>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&ak=QUSzk8g7c6Z10cAmLmfjgG1NB7aaBiyo"></script>
+    <title>车位详情</title>
+    <style type="text/css">
+        #allmap {
+            height: 400px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        #result {
+            width: 100%;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<span th:replace="/common/head2 :: header"></span>
+
+<div class="main">
+    <div class="container clearfix">
+        <div class="bread">当前位置：
+            <a href="#">首页</a> >
+            <a href="#">车位详情</a>
+        </div>
+        <div class="main-left fl clearfix">
+            <div class="zoom-wrap fl" style="width: 60%">
+                <div id="allmap"></div>
+                <div id="result">
+                </div>
+            </div>
+            <div class="attr fl" style="width:200px">
+                <p>车位编号：<span th:text="${park.name}"></span></p>
+                <p>价格：<span th:text="${park.price}">江西师范大学</span></p>
+                <p>路线推介：进入停车场后直行5米，左转弯行驶<span th:text="${park.id*3}"></span>米</p>
+                <a th:href="@{'/park/buy?id='+${park.id}}" class="pay">立即预约</a>
+            </div>
+            <div class="clearfix"></div>
+            <input type="hidden" th:value="${park.parkaddr}" id="parkaddr" name="parkaddr">
+        </div>
+
+    </div>
+</div>
+
+<span th:replace="/common/foot :: footer"></span>
+
+
+<script type="text/javascript">
+    //百度地图API功能
+    $(function () {
+    var map = new BMap.Map("allmap");
+    map.enableScrollWheelZoom();
+    var myGeo = new BMap.Geocoder();
+        var adds = $("#parkaddr").val();
+    myGeo.getPoint(adds, function (point) {
+        if (point) {
+            map.centerAndZoom(new BMap.Point(point.lng, point.lat), 14);
+            // document.getElementById("result").innerHTML += adds + ":" + point.lng + "," + point.lat + "</br>";
+            var address = new BMap.Point(point.lng, point.lat);
+            addMarker(address, new BMap.Label(adds, {offset: new BMap.Size(20, -10)}));
+        } else {
+            alert("您选择地址没有解析到结果!");
+        }
+    });
+
+    // 编写自定义函数,创建标注
+    function addMarker(point, label) {
+        var marker = new BMap.Marker(point);
+        map.addOverlay(marker); // 将标注添加到地图中
+        marker.setLabel(label);
+    }
+    })
+
+</script>
+</body>
+</html>

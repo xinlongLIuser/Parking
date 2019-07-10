@@ -1,0 +1,50 @@
+#服务器端口
+server:
+  port: 8081
+#数据库连接
+spring:
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+#       content-type: text/html
+    mode: LEGACYHTML5
+#    数据库连接
+  datasource:
+      url:  jdbc:mysql://localhost:3306/park?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+      username:  root
+      password:  root
+      driver-class-name:  com.mysql.cj.jdbc.Driver
+#      资源位置
+  resources:
+    static-locations: classpath:/static/,classpath:/static/lib/,classpath:/static/js/
+  devtools:
+    restart:
+      enabled: true  #设置开启热部署
+      exclude: templates/**
+  #      additional-paths: src/main/java
+  freemarker:
+    cache: false #页面不加载缓存，修改即时生效
+#    上传大小
+  servlet:
+    multipart:
+      max-file-size: 128KB
+      max-request-size: 128KB
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+    password:
+    timeout: 2000ms
+#showSql
+logging:
+  level:
+   com:
+     qhit:
+       parking:
+         dao: debug
+#mybatis连接
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+#debug: true

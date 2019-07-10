@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qhit.parking.dao.NoticeMapper">
+  <resultMap id="BaseResultMap" type="com.qhit.parking.entity.Notice">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="title" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="content" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="createDate" javaType="java.util.Date" jdbcType="DATE" />
+      <arg column="admin_id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+      <arg column="admin_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+    </constructor>
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from notice
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.qhit.parking.entity.Notice">
+    insert into notice (id, title, content, 
+      createDate, admin_id, admin_name
+      )
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
+      #{createdate,jdbcType=DATE}, #{adminId,jdbcType=INTEGER}, #{adminName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.qhit.parking.entity.Notice">
+    update notice
+    set title = #{title,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      createDate = #{createdate,jdbcType=DATE},
+      admin_id = #{adminId,jdbcType=INTEGER},
+      admin_name = #{adminName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, title, content, createDate, admin_id, admin_name
+    from notice
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, title, content, createDate, admin_id, admin_name
+    from notice
+  </select>
+</mapper>

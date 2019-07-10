@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>柱状图</title>
+    <!--<link rel="stylesheet" type="text/css" th:href="@{css/home.css}">-->
+    <style>
+        #main{
+            display: inline-block;
+            width: 600px;
+            height: 300px;
+            margin:30px;padding: 20px;
+        }
+    </style>
+    <script th:src="@{/js/jquery-2.2.0.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/echarts.common.min.js}"></script>
+    <script>
+
+         $(function () {
+                  $.post("/park/echarts-list",function (data) {
+        var myChart = echarts.init(document.getElementById('main'));
+        var arr1=[];
+        var arr2=[];
+        var arr3=[];
+        var arr4=[];
+        $(data).each(function () {
+
+            arr1.push(this.name);
+            arr2.push(this.orders.sumpark);
+            arr3.push(this.orders.total);
+            arr4.push(this.price);
+        });
+                      var length = arr1.length;
+                      var arrays = new Array();
+                      for(var i = 0; i < length; i++){
+                          arrays[i] = {value:arr2[i],name:arr1[i]}
+                      }
+
+                      var option = {
+                          title : {
+                              text: '车辆统计',
+                              subtext: '车辆统计图',//虚拟名字
+                              x:'center'
+                          },
+                          tooltip : {
+                              trigger: 'item',
+                              formatter: "{a} <br/>{b} : {c} ({d}%)"
+                          },
+                          legend: {
+                              orient : 'vertical',
+                              x : 'left',
+                              data:['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+                          },
+                          toolbox: {
+                              show : true,
+                              feature : {
+                                  mark : {show: true},
+                                  dataView : {show: true, readOnly: false},
+                                  magicType : {
+                                      show: true,
+                                      type: ['pie', 'funnel'],
+                                      option: {
+                                          funnel: {
+                                              x: '25%',
+                                              width: '50%',
+                                              funnelAlign: 'left',
+                                              max: 1548
+                                          }
+                                      }
+                                  },
+                                  restore : {show: true},
+                                  saveAsImage : {show: true}
+                              }
+                          },
+                          calculable : true,
+                          series : [
+                              {
+                                  name:'访问来源',
+                                  type:'pie',
+                                  radius : '55%',
+                                  center: ['50%', '60%'],
+                                  data:arrays
+//                                  data:[
+//                                      {value:335, name:'直接访问'},
+//                                      {value:310, name:'邮件营销'},
+//                                      {value:234, name:'联盟广告'},
+//                                      {value:135, name:'视频广告'},
+//                                      {value:1548, name:'搜索引擎'}
+//                                  ]
+                              }
+                          ]
+                      };
+
+                      myChart.setOption(option);
+    },'json')
+})
+
+    </script>
+
+</head>
+<body>
+    <div id="main"></div>
+
+</body>
+
+</html>

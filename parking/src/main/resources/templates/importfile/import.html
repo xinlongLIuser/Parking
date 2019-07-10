@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/common/head :: commonHead('导入数据')">
+    <head>
+    </head>
+<body>
+<!--method="post" enctype="multipart/form-data" action="/park/import"-->
+<article class="page-container">
+    <form class="form form-horizontal" id="form" method="post" enctype="multipart/form-data">
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+       <span class="btn-upload form-group">
+       <span class="c-red"> *上传文件：</span>
+           <input class="input-text upload-url radius" type="text" name="uploadfile" id="uploadfile" readonly>
+            <a href="javascript:void();" class="btn btn-primary radius">
+                <i class="Hui-iconfont">&#xe642;</i> 浏览文件
+            </a>
+            <input name="file" type="file" class="input-file">
+       </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+        <span class="btn-upload form-group">
+            <span class="c-red"> *下载模板：</span>
+<!--         <a href="/park/exportTemplate">下载导入模板</a>-->
+               <a class=" btn btn-primary radius " style="width: 100px"
+                href="/park/exportTemplate" >
+            <i class="Hui-iconfont">&#xe640;</i>
+        </a>
+        </span>
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <!--                        <button type="button" id="upload">保存</button>-->
+                <input class="btn btn-primary radius" type="button" id="upload" value="保存">
+                <input class="btn btn-primary radius" type="button" id="quit" value="退出">
+            </div>
+        </div>
+
+
+        </li>
+        </ul>
+        <!--    </div>-->
+    </form>
+</article>
+
+</body>
+<span th:include="/common/on-load-js :: commonOnLoadJs"></span>
+<script>
+    $(function () {
+        $("#upload").click(function () {
+            var formData = new FormData($('#form')[0]);//获取表单中的文
+            $.ajax({
+                url: '/park/import',
+                type: 'POST',
+                cache: false,
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    console.log(data.res == "3");
+                    if (data.res == '3') {
+                        layer.msg('上传文件格式不正确', {icon: 1, time: 1000});
+                    } else if (data.res == '4') {
+                        layer.msg('上传文件不能为空', {icon: 1, time: 1000});
+                    } else if (data.res == '0') {
+                        layer.msg('添加成功!', {icon: 1, time: 1000});
+                        setTimeout(function () {
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.$('#shuaxin').click();
+                            parent.layer.close(index);
+                        }, "1000");
+                    } else {
+                        layer.msg('添加失败!', {icon: 1, time: 1000});
+                    }
+                },
+                error: function (XmlHttpRequest, textStatus, errorThrown) {
+                    layer.msg('error!', {icon: 1, time: 1000});
+                }
+            }, 'json');
+        })
+
+        $("#quit").click(function () {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);
+        })
+    })
+</script>
+</html>
